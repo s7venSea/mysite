@@ -1,8 +1,8 @@
 const config = {
-    spacing: 24,
+    spacing: 30,
     baseRadius: 1,
-    maxRadius: 2,
-    glowDistance: 120 
+    maxRadius: 3,
+    glowDistance: 150
 };
 
 let width, height;
@@ -45,13 +45,13 @@ function drawDots() {
             const distance = Math.sqrt(dx * dx + dy * dy);
             
             let radius = config.baseRadius;
-            let opacity = 0.05;
+            let opacity = 0.2;
             let color = colorBase;
 
             if (distance < config.glowDistance) {
                 const falloff = 1 - (distance / config.glowDistance); 
                 radius = config.baseRadius + ((config.maxRadius - config.baseRadius) * falloff);
-                opacity = 0.05 + (0.02 * falloff);
+                opacity = 0.2 + (0.02 * falloff);
                 color = colorGlow;
             }
 

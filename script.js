@@ -5,12 +5,10 @@ const config = {
     glowDistance: 150
 };
 
-let width, height;
+let width, height, animationFrameId;
 let mouse = { x: -1000, y: -1000 };
-let colorBase = '';
-let colorGlow = '';
-let dotsEnabled = localStorage.getItem('dotsEnabled') !== 'false'; // Default to true
-let animationFrameId;
+let colorBase = '', colorGlow = '';
+let dotsEnabled = localStorage.getItem('dotsEnabled') !== 'false'; 
 
 const themeToggleBtn = document.getElementById('theme-toggle');
 const dotToggleBtn = document.getElementById('dot-toggle');
@@ -27,10 +25,8 @@ function updateCanvasColors() {
 }
 
 function resizeCanvas() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
 }
 
 function drawDots() {
@@ -64,16 +60,18 @@ function drawDots() {
     }
     animationFrameId = requestAnimationFrame(drawDots);
 }
+
 window.addEventListener('mousemove', (e) => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
 });
 
 window.addEventListener('resize', resizeCanvas);
-themeToggleBtn.addEventListener('click', () => {
-    let theme = document.documentElement.getAttribute('data-theme');
 
-    if (theme === 'light') {
+themeToggleBtn.addEventListener('click', () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    
+    if (isLight) {
         document.documentElement.removeAttribute('data-theme');
         themeToggleBtn.textContent = 'Light Mode';
         localStorage.setItem('theme', 'dark');
@@ -85,40 +83,34 @@ themeToggleBtn.addEventListener('click', () => {
     setTimeout(updateCanvasColors, 10); 
 });
 
-
 dotToggleBtn.addEventListener('click', () => {
     dotsEnabled = !dotsEnabled;
+    localStorage.setItem('dotsEnabled', dotsEnabled);
     
     if (dotsEnabled) {
         canvas.style.display = 'block';
         dotToggleBtn.textContent = 'Disable Effect';
-        localStorage.setItem('dotsEnabled', 'true');
         drawDots(); 
     } else {
         canvas.style.display = 'none';
         dotToggleBtn.textContent = 'Enable Effect';
-        localStorage.setItem('dotsEnabled', 'false');
         cancelAnimationFrame(animationFrameId);
     }
 });
 
-
 function init() {
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme === 'light') {
+    if (localStorage.getItem('theme') === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
         themeToggleBtn.textContent = 'Dark Mode';
     }
-    if (!dotsEnabled) {
-        canvas.style.display = 'none';
-        dotToggleBtn.textContent = 'Enable Effect';
-    } else {
-        dotToggleBtn.textContent = 'Disable Effect';
-    }
+
+    canvas.style.display = dotsEnabled ? 'block' : 'none';
+    dotToggleBtn.textContent = dotsEnabled ? 'Disable Effect' : 'Enable Effect';
+    
     updateCanvasColors();
     resizeCanvas();
-    if (dotsEnabled) {
-        drawDots();
-    }
+    
+    if (dotsEnabled) drawDots();
 }
+
 init();
